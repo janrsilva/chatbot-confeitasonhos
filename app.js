@@ -1,8 +1,9 @@
 // Importa as dependências
+let auth = require('./config/auth');
 let MessagingHub = require('messaginghub-client');
 let WebSocketTransport = require('lime-transport-websocket');
-const identifier = "";
-const key = "";
+const identifier = auth.identifier;
+const key = auth.key;
 // Cria uma instância do cliente, informando o identifier e accessKey do seu chatbot 
 let client = new MessagingHub.ClientBuilder()
     .withIdentifier(identifier)
