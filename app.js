@@ -39,8 +39,8 @@ client.addMessageReceiver(true, function (message) {
                 log(intention);
                 if(intention.resource.items.length){
                     var rand = intention.resource.items[Math.floor(Math.random() * intention.resource.items.length)];
-                    var resposta = rand.value.replace("#", "");
                     var index = rand.value.indexOf("#");
+                    var resposta = rand.value.replace("#", "");
                     
                     let msg;
                     if(index == -1){
