@@ -4,6 +4,7 @@ let MessagingHub = require('messaginghub-client');
 let WebSocketTransport = require('lime-transport-websocket');
 const identifier = auth.identifier;
 const key = auth.key;
+
 // Cria uma instância do cliente, informando o identifier e accessKey do seu chatbot 
 let client = new MessagingHub.ClientBuilder()
     .withIdentifier(identifier)
@@ -33,11 +34,29 @@ client.addMessageReceiver(true, function (message) {
                 "id": id,
                 "to": "postmaster@ai.msging.net",
                 "method": "get",
-                "uri": "/intentions/"+id
+                "uri": "/intentions/"+id+"/answers"
             }).then(function(intention) {
                 log(intention);
-                if(response.resource.intentions){
-                    let id = response.resource.intentions[0].id;
+                if(intention.resource.items.length){
+                    var rand = intention.resource.items[Math.floor(Math.random() * intention.resource.items.length)];
+                    var resposta = rand.value.replace("#", "");
+                    var index = rand.value.indexOf("#");
+                    
+                    let msg;
+                    if(index == -1){
+                        msg = { type: "text/plain", content: resposta, to: message.from };
+                    } else {
+                        msg = {
+                            to: message.from,
+                            type: "application/vnd.iris.resource+json",
+                            content: {
+                                key: resposta
+                            }
+                        };
+                    }
+
+                    client.sendMessage(msg);
+                    log("mandei a mensagem >>>>> " + rand.value + " >>>>> " + message.from);
                 }
             });
         }
@@ -55,8 +74,6 @@ client.connect()  // O retorno deste método é uma 'promise'.
     .then(function (session) {
         // Conexão bem sucedida. A partir deste momento, é possível enviar e receber envelopes do servidor. */ 
         console.log('Connectado');
-        var msg = { type: "text/plain", content: "Hello, world", to: "553199990000@0mn.io" };
-        client.sendMessage(msg);
     })
     .catch(function (err) {
         // Falha na conexão
